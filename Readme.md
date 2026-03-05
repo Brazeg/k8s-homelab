@@ -310,8 +310,9 @@ On the master node:
 
 ### 7.1 Install Helm
 
-    curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+    sudo apt-get install curl gpg apt-transport-https --yes
+    curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+    echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
     sudo apt-get update
     sudo apt-get install helm
 
@@ -364,38 +365,38 @@ monitoring-nodeports.yaml content:
     apiVersion: v1
     kind: Service
     metadata:
-    name: prometheus-nodeport
-    namespace: monitoring
-    labels:
+      name: prometheus-nodeport
+      namespace: monitoring
+      labels:
         app: prometheus
     spec:
-    type: NodePort
-    ports:
+      type: NodePort
+      ports:
         - port: 9090
-        targetPort: 9090
-        nodePort: 30909  # You can choose a port between 30000-32767
-        protocol: TCP
-        name: http
-    selector:
+          targetPort: 9090
+          nodePort: 30909  # You can choose a port between 30000-32767
+          protocol: TCP
+          name: http
+      selector:
         app.kubernetes.io/name: prometheus
         prometheus: monitoring-kube-prometheus-prometheus
     ---
     apiVersion: v1
     kind: Service
     metadata:
-    name: grafana-nodeport
-    namespace: monitoring
-    labels:
+      name: grafana-nodeport
+      namespace: monitoring
+      labels:
         app: grafana
     spec:
-    type: NodePort
-    ports:
+      type: NodePort
+      ports:
         - port: 3000
-        targetPort: 3000
-        nodePort: 30300  # You can choose a port between 30000-32767
-        protocol: TCP
-        name: http
-    selector:
+          targetPort: 3000
+          nodePort: 30300  # You can choose a port between 30000-32767
+          protocol: TCP
+          name: http
+     selector:
         app.kubernetes.io/name: grafana
 
 
