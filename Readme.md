@@ -1,5 +1,5 @@
 
-Complete guide to setting up a Kubernetes lab environment on a virtual Ubuntu machine virtualized with VMware Workstation Pro on Windows 11
+Complete guide to setting up a Kubernetes lab environment on an Ubuntu virtual machine hosted using VMware Workstation Pro on Windows 11 machine
 
 <img src="Space Captain.png" alt="Lab Setup" title="Kubernetes Space Captain" width="800"/>
 
