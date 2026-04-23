@@ -341,7 +341,7 @@ To access Grafana, use port-forwarding with SSH Tunneling:
 
 2. Once connected, run the port-forward command in the SSH session:
 
-        kubectl port-forward deployment/monitoring-grafana 3000
+        kubectl port-forward deployment/monitoring-grafana 3000 --namespace=monitoring
 
 
 Access Grafana at `http://localhost:3000` in your browser.
