@@ -34,6 +34,8 @@ jobs:
       - uses: go-task/setup-task@v2
 
       - name: Install kind and kubectl
+        # Download into $RUNNER_TEMP: the repo root already has a kind/ directory
+        working-directory: ${{ runner.temp }}
         run: |
           curl -Lo kind https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64
           sudo install -m 0755 kind /usr/local/bin/kind && rm kind
