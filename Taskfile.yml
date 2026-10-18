@@ -1,0 +1,65 @@
+# Shortcuts for the kind lab (Path B). Install Task from https://taskfile.dev, then run `task`
+# from the repo root in WSL to list everything. Each task is a thin wrapper around commands the
+# guides already teach, so open this file whenever you want to see exactly what a shortcut does.
+version: '3'
+
+vars:
+  CLUSTER: k8s
+  CALICO_VERSION: v3.32.2  # keep in sync with kind/README.md section 2
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    silent: true
+
+  kind:up:
+    desc: Create the 2-node kind cluster and install Calico (kind/README.md section 2)
+    status:
+      - kind get clusters | grep -qx {{.CLUSTER}}  # skip if the cluster already exists
+    cmds:
+      - kind create cluster --config kind/kind-config.yaml
+      - kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/{{.CALICO_VERSION}}/manifests/v1_crd_projectcalico_org.yaml
+      - kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/{{.CALICO_VERSION}}/manifests/tigera-operator.yaml
+      - kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/{{.CALICO_VERSION}}/manifests/custom-resources.yaml
+      # Nodes stay NotReady until the CNI is running
+      - kubectl wait --for=condition=Ready nodes --all --timeout=300s
+      - kubectl wait --for=condition=Ready pods --all -A --timeout=300s
+      - kubectl get nodes -o wide
+
+  kind:down:
+    desc: Delete the kind cluster
+    cmds:
+      - kind delete cluster --name {{.CLUSTER}}
+
+  kind:reset:
+    desc: Throw the cluster away and rebuild it (the kind version of a VMware snapshot revert)
+    cmds:
+      - task: kind:down
+      - task: kind:up
+
+  break:
+    desc: "Inject a break-fix scenario, e.g. task break S=1"
+    requires:
+      vars: [S]
+    cmds:
+      - bash scripts/scenario.sh break {{.S}}
+
+  verify:
+    desc: "Grade your fix, e.g. task verify S=1"
+    requires:
+      vars: [S]
+    cmds:
+      - bash scripts/scenario.sh verify {{.S}}
+
+  fix:
+    desc: "Apply the reference solution (spoiler!), e.g. task fix S=1"
+    requires:
+      vars: [S]
+    cmds:
+      - bash scripts/scenario.sh fix {{.S}}
+
+  test:
+    desc: "Self-test scenarios: break, verify must FAIL, fix, verify must PASS (task test or task test S=2)"
+    cmds:
+      - bash scripts/scenario.sh test {{.S | default "all"}}

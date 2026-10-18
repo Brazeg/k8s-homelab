@@ -44,6 +44,11 @@ The labs are written for a **bash** shell (heredocs, `chmod`, `.sh` scripts), so
    docker version && kind version && kubectl version --client
    ```
    For Helm, use the same commands as [Main Guide Section 7.1](../Readme.md#71-install-helm).
+4. **Optional:** install [Task](https://taskfile.dev) for the shortcuts in [`Taskfile.yml`](../Taskfile.yml):
+   ```bash
+   sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
+   task   # lists every shortcut
+   ```
 
 ---
 
@@ -70,6 +75,8 @@ kubectl get pods -A
 ```
 
 The nodes stay `NotReady` until Calico is running. That's expected, and it's the same CNI lesson as on the VMs.
+
+> **Shortcut:** `task kind:up` runs steps 1–3 for you. Type the commands by hand at least once first, so you know what the shortcut does.
 
 ---
 
@@ -142,6 +149,7 @@ Access Grafana either way:
 # Instant "snapshot revert": throw the cluster away and rebuild it
 kind delete cluster --name k8s
 kind create cluster --config kind/kind-config.yaml   # then re-run the Calico steps in section 2
+# ...or all of the above in one go: task kind:reset
 
 # Pause the cluster to free CPU/RAM (state is kept on disk)
 docker stop k8s-control-plane k8s-worker

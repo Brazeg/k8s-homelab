@@ -1,0 +1,61 @@
+# Proves every break-fix scenario still works: build the kind cluster, then for each scenario
+# break it, check that verify.sh FAILS, apply fix.sh, and check that verify.sh PASSES.
+# The weekly run catches upstream drift (node images, Calico manifest URLs, API deprecations)
+# even in weeks when nothing in this repo changed.
+name: Break-Fix Scenarios
+
+on:
+  push:
+    branches: [main]
+    paths: &paths
+      - 05-troubleshooting-break-fix/**
+      - kind/**
+      - scripts/**
+      - Taskfile.yml
+      - .github/workflows/scenarios.yml
+  pull_request:
+    paths: *paths
+  schedule:
+    - cron: '0 6 * * 1'  # Mondays 06:00 UTC
+  workflow_dispatch:
+
+env:
+  # Keep in sync with kind/README.md section 1
+  KIND_VERSION: v0.33.0
+  KUBECTL_VERSION: v1.35.8
+
+jobs:
+  scenarios:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: go-task/setup-task@v2
+
+      - name: Install kind and kubectl
+        run: |
+          curl -Lo kind https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-amd64
+          sudo install -m 0755 kind /usr/local/bin/kind && rm kind
+          curl -LO https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+          sudo install -m 0755 kubectl /usr/local/bin/kubectl && rm kubectl
+
+      - name: Create cluster
+        run: task kind:up
+
+      - name: Self-test all scenarios
+        run: task test
+
+      - name: Dump cluster state
+        if: failure()
+        run: |
+          kubectl get nodes -o wide || true
+          kubectl get pods -A -o wide || true
+          kubectl get events -A --sort-by=.lastTimestamp | tail -n 50 || true
+          kind export logs ./kind-logs --name k8s || true
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: kind-logs
+          path: kind-logs
