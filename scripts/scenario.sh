@@ -52,7 +52,7 @@ expect() {  # expect <pass|fail> <NN>
   local want=$1 n=$2 out rc
   for _ in $(seq 1 36); do  # 36 x 5s = 3 minutes
     rc=0
-    out=$(timeout 60 "$0" verify "$n" 2>&1) || rc=$?
+    out=$(timeout 60 bash "$0" verify "$n" 2>&1) || rc=$?
     if { [ "$want" = pass ] && [ "$rc" -eq 0 ]; } || { [ "$want" = fail ] && [ "$rc" -ne 0 ]; }; then
       echo "$out" | sed 's/^/   │ /'
       return
@@ -61,6 +61,23 @@ expect() {  # expect <pass|fail> <NN>
   done
   echo "❌ verify.sh never ${want}ed. Last output:"
   echo "$out"
+  exit 1
+}
+
+# "verify.sh passed" doesn't mean the whole cluster has recovered. After Scenario 02, for example,
+# kube-scheduler and kube-controller-manager restart because they lost their leader-election
+# lease while the API server was down. Wait for nodes and control-plane pods before moving on.
+wait_healthy() {
+  for _ in $(seq 1 36); do  # 36 x 5s = 3 minutes
+    if kubectl wait --for=condition=Ready nodes --all --timeout=10s &>/dev/null &&
+       kubectl wait --for=condition=Ready pods -l tier=control-plane -n kube-system --timeout=10s &>/dev/null; then
+      return
+    fi
+    sleep 5
+  done
+  echo "❌ The cluster did not become healthy again"
+  kubectl get nodes || true
+  kubectl get pods -n kube-system || true
   exit 1
 }
 
@@ -76,8 +93,7 @@ selftest() {  # selftest <NN>
   run fix "$n"
   echo "▶ 4/4 verify.sh must PASS (proves the solution actually fixes it)"
   expect pass "$n"
-  # Leave a healthy cluster behind for the next scenario
-  kubectl wait --for=condition=Ready nodes --all --timeout=180s >/dev/null
+  wait_healthy
   echo "✅ Scenario $n self-test passed"
 }
 

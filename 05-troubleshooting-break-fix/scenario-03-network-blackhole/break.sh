@@ -9,6 +9,13 @@ echo "🔧 Setting up Scenario 03 in namespace 'cka-net-lab'..."
 kubectl delete namespace cka-net-lab --ignore-not-found=true &>/dev/null || true
 kubectl create namespace cka-net-lab
 
+# kube-controller-manager creates the namespace's 'default' ServiceAccount a moment later.
+# Creating a bare pod before that is rejected ("serviceaccount default not found").
+for _ in $(seq 1 60); do
+  kubectl get serviceaccount default -n cka-net-lab &>/dev/null && break
+  sleep 1
+done
+
 # 1. Create backend pod with label app=payment-api,tier=backend
 kubectl run payment-backend -n cka-net-lab \
   --image=nginx:alpine \

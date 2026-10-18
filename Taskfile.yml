@@ -24,7 +24,9 @@ tasks:
       - kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/{{.CALICO_VERSION}}/manifests/custom-resources.yaml
       # Nodes stay NotReady until the CNI is running
       - kubectl wait --for=condition=Ready nodes --all --timeout=300s
-      - kubectl wait --for=condition=Ready pods --all -A --timeout=300s
+      # Wait on the owners, not individual pods: the operator replaces pods while it rolls out
+      - kubectl wait --for=condition=Available tigerastatus --all --timeout=300s
+      - kubectl wait --for=condition=Available deployment --all -n kube-system --timeout=300s
       - kubectl get nodes -o wide
 
   kind:down:

@@ -6,7 +6,8 @@ command -v sudo >/dev/null || sudo() { "$@"; }  # kind nodes run as root without
 
 echo "🔍 Verifying Scenario 02..."
 
-if ! kubectl get nodes &>/dev/null; then
+# --request-timeout: an API server that can't reach etcd may hang requests instead of refusing them
+if ! kubectl get nodes --request-timeout=10s &>/dev/null; then
   echo "❌ FAIL: 'kubectl get nodes' is still failing."
   echo "   Hint: Use 'sudo crictl ps -a | grep kube-apiserver' and 'sudo crictl logs <id>'."
   echo "   Wait 15-30 seconds if you just edited /etc/kubernetes/manifests/kube-apiserver.yaml."
