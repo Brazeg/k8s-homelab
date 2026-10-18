@@ -47,4 +47,9 @@
    ./verify.sh
    ```
 
+5. **Give the rest of the control plane a minute.** While the API server was down, `kube-scheduler` and `kube-controller-manager` lost their leader-election lease and restarted. So for a short while new pods may stay `Pending` (no scheduler) and new namespaces may have no `default` ServiceAccount (no controller-manager). Check that they're back before you move on to the next task:
+   ```bash
+   kubectl get pods -n kube-system -l tier=control-plane
+   ```
+
 > **⚠️ Critical CKA Exam Trap:** Never save backup files (like `kube-apiserver.yaml.bak`) inside `/etc/kubernetes/manifests/`! `kubelet` tries to run **every** file in `/etc/kubernetes/manifests/` as a static pod, which will create duplicate conflicting control plane pods. Always put backups in `/root/` or `~/`.
