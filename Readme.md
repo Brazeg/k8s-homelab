@@ -142,12 +142,11 @@ Once your 2-node cluster is up and running (Steps 1–6 below, or the [kind Quic
 
 ### 2. Software Requirements
 
-#### 2.1 VMware Workstation Pro 17 (Free for personal usage)
-> **Note:** The VMware Workstation 17 download process changed after the Broadcom acquisition of VMware:
-> 1. Create an account on [https://broadcom.com](https://broadcom.com)
-> 2. Go to [https://support.broadcom.com/](https://support.broadcom.com/)
-> 3. Choose **Cloud Foundation** from the upper-right menu
-> 4. Navigate to **My Downloads** and select **VMware Workstation Pro**
+#### 2.1 VMware Workstation Pro (17 / 25H2 / 26H1u1+ — Free)
+> **Note:** Broadcom switched VMware Workstation Pro to calendar-based version names (such as **`25H2`**, **`26H1`**, and **`26H1u1`**) and made it **100% free** (no license key required). All versions (`17.x` through `26H1u1+`) work identically for this lab:
+> 1. Create an account on [https://support.broadcom.com/](https://support.broadcom.com/)
+> 2. Log in and select **My Downloads** $\rightarrow$ **Free Software Downloads available HERE** $\rightarrow$ **VMware Workstation Pro**
+> 3. Select the latest Windows release (e.g., **`26H1u1`** or **`17.x`**) and accept the terms to download.
 
 #### 2.2 Ubuntu Server ISO
 - **Official website:** [https://ubuntu.com/download/alternative-downloads](https://ubuntu.com/download/alternative-downloads)
