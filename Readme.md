@@ -1,5 +1,7 @@
 # Kubernetes Homelab & CKA Preparation Guide
 
+[![Break-Fix Scenarios](https://github.com/Brazeg/k8s-homelab/actions/workflows/scenarios.yml/badge.svg)](./05-troubleshooting-break-fix/README.md#4-how-the-scenarios-test-themselves-ci)
+
 Complete guide to setting up a production-like **Vanilla Kubernetes (`kubeadm`)** lab environment on Ubuntu Server virtual machines hosted using VMware Workstation Pro on Windows 11.
 
 <img src="Space Captain.png" alt="Lab Setup" title="Kubernetes Space Captain" width="800"/>

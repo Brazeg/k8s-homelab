@@ -42,6 +42,7 @@ Each scenario folder contains:
 - **`break.sh`**: Run this script to inject a realistic CKA exam failure into your cluster without peeking at what it changed.
 - **`verify.sh`**: Run this script after you think you've fixed the issue—it grades your work (`PASS ✅` or `FAIL ❌`).
 - **`SOLUTION.md`**: Step-by-step diagnosis and fix if you get stuck.
+- **`fix.sh`**: ⚠️ *Spoiler.* The `SOLUTION.md` fix as a script. It exists so the scenarios can test themselves ([section 4](#4-how-the-scenarios-test-themselves-ci)). Don't run it while practicing.
 
 > **💡 Before You Start:** Make sure you have a clean VMware Snapshot of `k8s-master` and `k8s-worker`, or always run `verify.sh` before moving to the next scenario!
 
@@ -81,3 +82,30 @@ chmod +x break.sh verify.sh
 > docker exec -it -e KUBECONFIG=/etc/kubernetes/admin.conf -w /root/scenario-02-apiserver-down k8s-control-plane bash
 > ```
 > Snapshot equivalent: `kind delete cluster --name k8s` and then recreate it ([kind/README.md](../kind/README.md)).
+
+> **kind shortcut with [Task](https://taskfile.dev):** From the repo root, `task break S=1` and `task verify S=1` do the `docker cp` / `docker exec` steps above for you, and work the same for every scenario. You still diagnose the problem by hand, for example with `docker exec -it k8s-worker bash`. See the [`Taskfile.yml`](../Taskfile.yml) for exactly what each shortcut runs.
+
+---
+
+## 4. How the Scenarios Test Themselves (CI)
+
+A break-fix lab can go stale without anyone noticing. A new Kubernetes release might deprecate an API that `verify.sh` uses (this already happened: the v1 `Endpoints` API was deprecated in 1.33, so Scenario 03 now reads `EndpointSlices`). An upstream manifest URL can move, or a typo in `break.sh` can mean nothing breaks at all. To catch all of these, the [GitHub Actions workflow](../.github/workflows/scenarios.yml) builds the kind cluster and runs every scenario through four steps:
+
+| Step | What runs | What it proves |
+| :--- | :--- | :--- |
+| 1 | `break.sh` | The failure can still be injected |
+| 2 | `verify.sh` **must FAIL** | The grader notices the breakage. A grader that always passes would teach you nothing |
+| 3 | `fix.sh` | The `SOLUTION.md` fix still applies on the current Kubernetes version |
+| 4 | `verify.sh` **must PASS** | That fix is really what the grader checks for |
+
+Step 2 is the one people usually skip. It's called *testing the test*: if you only ever check the happy path, a broken grader looks exactly like a passing student.
+
+Two details are worth knowing for the exam as well:
+- **Kubernetes is eventually consistent.** After you edit a static pod manifest, kubelet needs about 20 seconds to recreate the pod, and a rollout takes time to finish. So [`scripts/scenario.sh`](../scripts/scenario.sh) re-runs `verify.sh` every 5 seconds, for up to 3 minutes, instead of checking once. In the exam, wait and re-check before you decide a fix didn't work.
+- **It runs every Monday**, even when nothing in this repo changed, because the things that break these labs (node images, Calico manifests, API deprecations) change upstream.
+
+Run the same self-test locally on your kind cluster:
+```bash
+task test        # all scenarios (about 5 minutes)
+task test S=2    # just one
+```
