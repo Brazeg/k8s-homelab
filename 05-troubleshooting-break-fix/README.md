@@ -114,7 +114,7 @@ task test S=2    # just one
 
 🎓 **That's the whole course.** To get exam-ready:
 - Re-run all four scenarios against a timer. Aim for under 10 minutes each, without opening `SOLUTION.md`.
-- If you studied on kind, build [Path A](../Readme.md#1-infrastructure-setup) at least once to practice the VM-only parts (OS prep, `kubeadm upgrade`, the full `etcd` restore).
+- If you studied on kind, build [Path A](../vm/README.md#1-infrastructure-setup) at least once to practice the VM-only parts (OS prep, `kubeadm upgrade`, the full `etcd` restore).
 - Go back over the [cheatsheet](../cheatsheets/cka-exam-day-survival-guide.md) until the first-60-seconds setup is automatic.
 
 ⬅ **Previous:** [Domain 4: Storage](../04-storage/README.md) · [⬆ CKA Study Hub](../Readme.md#cka-study-hub--hands-on-lab-modules)

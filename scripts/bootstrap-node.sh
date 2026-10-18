@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Automated Node Bootstrap Script (Covers Sections 2 & 3 of Readme.md)
+# Automated Node Bootstrap Script (Covers Sections 2 & 3 of vm/README.md)
 # Usage:
 #   On Master Node: sudo ./scripts/bootstrap-node.sh k8s-master 192.168.56.20
 #   On Worker Node: sudo ./scripts/bootstrap-node.sh k8s-worker 192.168.56.21

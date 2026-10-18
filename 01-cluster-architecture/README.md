@@ -25,6 +25,9 @@ This module covers **25% of the CKA exam**. Now that you have bootstrapped your 
 > 4. Create a `ClusterRole` named `node-pv-viewer` that allows `get` and `list` on cluster-scoped `nodes` and `persistentvolumes`, and bind it to `log-reader` using a `ClusterRoleBinding` named `read-nodes-binding`.
 > 5. Verify permissions using `kubectl auth can-i`.
 
+<details>
+<summary><b>Show solution</b> (try the scenario on your own first)</summary>
+
 ### Step-by-Step Lab
 
 1. **Create the namespace and ServiceAccount imperatively:**
@@ -74,6 +77,8 @@ This module covers **25% of the CKA exam**. Now that you have bootstrapped your 
    kubectl delete namespace audit
    ```
 
+</details>
+
 > **💡 Exam Tip:** Remember the difference between `Role` (namespace-scoped) and `ClusterRole` (cluster-scoped). You can also bind a `ClusterRole` to a single namespace using a `RoleBinding`!
 
 ---
@@ -83,10 +88,13 @@ This module covers **25% of the CKA exam**. Now that you have bootstrapped your 
 > **kind path:** ❌ VM-only. kind nodes are immutable images, so there is no apt repo to switch. To "upgrade" on kind, recreate the cluster with a newer `kindest/node` image. Practice this lab on [Path A](../Readme.md#choose-your-path-vms-or-kind).
 >
 > **⚠️ Snapshot First!** Take a VMware snapshot of `k8s-master` and `k8s-worker` before running this lab so you can practice the upgrade multiple times.
-> **🔥 Want to practice a Zero-Downtime Live Upgrade with running workloads, a `PodDisruptionBudget`, and a live HTTP uptime monitor?** See [**Section 8 of the Main Guide (`Live Cluster Upgrade With Running Workloads`)**](../Readme.md#8-live-cluster-upgrade-v129--v130-with-running-workloads).
+> **🔥 Want to practice a Zero-Downtime Live Upgrade with running workloads, a `PodDisruptionBudget`, and a live HTTP uptime monitor?** See [**Section 8 of the VM Lab guide (`Live Cluster Upgrade With Running Workloads`)**](../vm/README.md#8-live-cluster-upgrade-v129--v130-with-running-workloads).
 
 ### Exam Scenario
 > Upgrade the control plane node (`k8s-master`) and worker node (`k8s-worker`) from Kubernetes `v1.29.x` to `v1.30.x`. Ensure workloads are safely drained before maintenance and uncordoned afterward.
+
+<details>
+<summary><b>Show solution</b> (try the scenario on your own first)</summary>
 
 ### Part A: Upgrade the Control Plane Node (`k8s-master`)
 
@@ -176,6 +184,8 @@ This module covers **25% of the CKA exam**. Now that you have bootstrapped your 
    kubectl get nodes
    ```
 
+</details>
+
 ---
 
 ## Lab 1.3: Backing Up and Restoring `etcd`
@@ -193,6 +203,9 @@ This module covers **25% of the CKA exam**. Now that you have bootstrapped your 
 > 1. Take a snapshot of the `etcd` instance running on `k8s-master` and save it to `/opt/etcd-backup.db`.
 > 2. Create a test pod (`kubectl run test-after-backup --image=nginx`).
 > 3. Restore `etcd` from `/opt/etcd-backup.db` into a new data directory `/var/lib/etcd-restored` and configure the `etcd` static pod to use it. Verify that `test-after-backup` is gone!
+
+<details>
+<summary><b>Show solution</b> (try the scenario on your own first)</summary>
 
 ### Step-by-Step Lab
 
@@ -253,6 +266,8 @@ This module covers **25% of the CKA exam**. Now that you have bootstrapped your 
    kubectl get pods
    # "test-after-backup" should no longer exist!
    ```
+
+</details>
 
 ---
 
