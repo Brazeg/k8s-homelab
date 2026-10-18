@@ -1,0 +1,28 @@
+# Path B: 2-node kind cluster that mirrors the VM lab (kubeadm + containerd + Calico)
+# Usage: kind create cluster --config kind/kind-config.yaml
+# Nodes: k8s-control-plane, k8s-worker
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: k8s
+networking:
+  disableDefaultCNI: true        # we install Calico instead of kindnet (NetworkPolicy labs)
+  podSubnet: 192.168.0.0/16      # Calico's default; the VM lab's 172.16.0.0/12 overlaps Docker's networks
+nodes:
+- role: control-plane
+  # Image list for kind v0.33.0: https://github.com/kubernetes-sigs/kind/releases/tag/v0.33.0
+  image: kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0
+  extraPortMappings:             # NodePorts used by the labs -> http://localhost:<port>
+  - containerPort: 30080         # live-storefront (Readme Section 8.1)
+    hostPort: 30080
+    listenAddress: 127.0.0.1
+  - containerPort: 30081         # ingress-nginx HTTP (Lab 3.2)
+    hostPort: 30081
+    listenAddress: 127.0.0.1
+  - containerPort: 30300         # Grafana (Readme Section 7.4)
+    hostPort: 30300
+    listenAddress: 127.0.0.1
+  - containerPort: 30909         # Prometheus (Readme Section 7.4)
+    hostPort: 30909
+    listenAddress: 127.0.0.1
+- role: worker
+  image: kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0

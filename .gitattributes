@@ -1,0 +1,10 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Always enforce LF (Unix) line endings for shell scripts and Kubernetes manifests
+# so scripts transferred from Windows to Ubuntu VMs never fail with '\r' errors
+*.sh text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.conf text eol=lf
+*.toml text eol=lf
