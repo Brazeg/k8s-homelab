@@ -297,3 +297,7 @@ The CKA exam tests resource usage inspection (`kubectl top`) and configuring `Ho
    kubectl delete deployment php-apache
    ```
 
+
+---
+
+⬅ **Previous:** [Domain 1: Cluster Architecture](../01-cluster-architecture/README.md) · [⬆ CKA Study Hub](../Readme.md#cka-study-hub--hands-on-lab-modules) · **Next:** [Domain 3: Services & Networking](../03-services-networking/README.md) ➡

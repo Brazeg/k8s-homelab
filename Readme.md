@@ -12,46 +12,21 @@ Complete guide to setting up a production-like **Vanilla Kubernetes (`kubeadm`)*
 - [Choose Your Path: VMs or kind](#choose-your-path-vms-or-kind)
 - [Understanding Kubernetes Distributions (Why `kubeadm` for CKA?)](#understanding-kubernetes-distributions-why-kubeadm-for-cka)
 - [CKA Study Hub & Hands-On Lab Modules](#cka-study-hub--hands-on-lab-modules)
-- [Prerequisites for Kubernetes Lab Environment](#prerequisites-for-kubernetes-lab-environment)
-- [1. Infrastructure Setup](#1-infrastructure-setup)
-  - [1.1 VM Configuration in VMware Workstation Pro](#11-vm-configuration-in-vmware-workstation-pro)
-    - [Master Node (k8s-master)](#master-node-k8s-master)
-    - [Worker Node (k8s-worker)](#worker-node-k8s-worker)
-  - [1.2 Network Configuration](#12-network-configuration)
-- [2. Basic System Configuration](#2-basic-system-configuration)
-  - [2.1 Update System](#21-update-system)
-  - [2.2 Disable Swap](#22-disable-swap)
-  - [2.3 Load Kernel Modules](#23-load-kernel-modules)
-  - [2.4 Configure Sysctl](#24-configure-sysctl)
-  - [2.5 Configure Network Interfaces on Both Nodes](#25-configure-network-interfaces-on-both-nodes)
-- [3. Kubernetes Installation](#3-kubernetes-installation)
-  - [3.1 Install containerd](#31-install-containerd)
-  - [3.2 Install Kubernetes Components](#32-install-kubernetes-components)
-- [4. Initialize Kubernetes Cluster](#4-initialize-kubernetes-cluster)
-  - [4.1 Initialize Control Plane](#41-initialize-control-plane)
-  - [4.2 Set Up kubectl for Non-Root User](#42-set-up-kubectl-for-non-root-user)
-  - [4.3 Install Calico Network Plugin](#43-install-calico-network-plugin)
-- [5. Join Worker Node to Cluster](#5-join-worker-node-to-cluster)
-- [6. Verify Cluster Setup](#6-verify-cluster-setup)
-- [7. Install Monitoring Stack (Prometheus and Grafana)](#7-install-monitoring-stack-prometheus-and-grafana)
-  - [7.1 Install Helm](#71-install-helm)
-  - [7.2 Install Prometheus and Grafana](#72-install-prometheus-and-grafana)
-  - [7.3 Access Grafana](#73-access-grafana)
-  - [7.4 OPTIONAL: Access Grafana and Prometheus Using NodePort](#74-optional-access-grafana-and-prometheus-using-nodeport)
-- [8. Live Cluster Upgrade (`v1.29` → `v1.30`) With Running Workloads](#8-live-cluster-upgrade-v129--v130-with-running-workloads)
-  - [8.1 Deploy a Live Application with PodDisruptionBudget & Uptime Monitor](#81-deploy-a-live-application-with-poddisruptionbudget--uptime-monitor)
-  - [8.2 The 2-Node Live Upgrade Trap (Control-Plane Taint & PDBs)](#82-the-2-node-live-upgrade-trap-control-plane-taint--pdbs)
-  - [8.3 Upgrade the Control Plane Node (`k8s-master`)](#83-upgrade-the-control-plane-node-k8s-master)
-  - [8.4 Drain Live Workloads & Upgrade the Worker Node (`k8s-worker`)](#84-drain-live-workloads--upgrade-the-worker-node-k8s-worker)
-  - [8.5 Rebalance Workloads & Chaining Further Upgrades (`v1.30` → `v1.31`)](#85-rebalance-workloads--chaining-further-upgrades-v130--v131)
-- [9. Troubleshooting and Verification](#9-troubleshooting-and-verification)
-  - [9.1 Check Node Status](#91-check-node-status)
-  - [9.2 Check Pod Status](#92-check-pod-status)
-  - [9.3 Check Logs](#93-check-logs)
-  - [9.4 Check Services](#94-check-services)
-  - [9.5 Common Setup Problems & Fixes](./Common%20problems/Readme.md)
-- [10. Accessing Kubernetes Cluster from Windows Host Machine](#10-accessing-kubernetes-cluster-from-windows-host-machine)
-- [11. Next Steps: Start Your CKA Practice Labs](#11-next-steps-start-your-cka-practice-labs)
+- **Path A: Full VM Lab setup** *(Path B: [kind/README.md](./kind/README.md))*
+  - [Prerequisites](#prerequisites-for-kubernetes-lab-environment)
+  - [1. Infrastructure Setup](#1-infrastructure-setup)
+  - [2. Basic System Configuration](#2-basic-system-configuration)
+  - [3. Kubernetes Installation](#3-kubernetes-installation)
+  - [4. Initialize Kubernetes Cluster](#4-initialize-kubernetes-cluster)
+  - [5. Join Worker Node to Cluster](#5-join-worker-node-to-cluster)
+  - [6. Verify Cluster Setup](#6-verify-cluster-setup)
+  - [7. Install Monitoring Stack (Prometheus and Grafana)](#7-install-monitoring-stack-prometheus-and-grafana) *(optional)*
+  - [8. Live Cluster Upgrade With Running Workloads](#8-live-cluster-upgrade-v129--v130-with-running-workloads) *(optional, do it after Lab 1.2)*
+  - [9. Troubleshooting and Verification](#9-troubleshooting-and-verification) · [Common Setup Problems & Fixes](./Common%20problems/Readme.md)
+  - [10. Accessing Kubernetes Cluster from Windows Host Machine](#10-accessing-kubernetes-cluster-from-windows-host-machine)
+  - [11. Next Steps](#11-next-steps)
+
+> GitHub also shows a full outline of every heading: click the **☰** icon at the top right of this file.
 
 ---
 
@@ -86,7 +61,10 @@ Both paths end with a 2-node `kubeadm` cluster running Calico, and both use the 
 
 ## Understanding Kubernetes Distributions (Why `kubeadm` for CKA?)
 
-When learning Kubernetes, it is easy to get confused by the different ways to run a cluster locally (`kind`, `minikube`, `MicroK8s`, `k3s`, or `kubeadm`).
+When learning Kubernetes, it is easy to get confused by the different ways to run a cluster locally (`kind`, `minikube`, `MicroK8s`, `k3s`, or `kubeadm`). **Short version:** the CKA exam runs on `kubeadm` clusters, so this lab does too.
+
+<details>
+<summary><b>Read the full comparison</b></summary>
 
 ### What This Lab Uses
 This repository builds **Vanilla (Upstream) Kubernetes using `kubeadm`**:
@@ -115,6 +93,8 @@ The official **CKA exam environment** runs on Ubuntu nodes provisioned with **`k
 4. **Node & Runtime Debugging:** Fixing broken worker nodes using `systemctl status kubelet`, `journalctl -xeu kubelet`, `/etc/containerd/config.toml`, and `crictl`.
 5. **Network Policies:** Using Calico to enforce ingress/egress `NetworkPolicy` rules between namespaces and pods.
 
+</details>
+
 ---
 
 ## CKA Study Hub & Hands-On Lab Modules
@@ -130,9 +110,15 @@ Once your 2-node cluster is up and running (Steps 1–6 below, or the [kind Quic
 | [**05. Troubleshooting & Interactive Break-Fix Scenarios**](./05-troubleshooting-break-fix/README.md) | **30%** | ⚠️ | Visual Troubleshooting Flowchart + **4 Automated `break.sh` / `verify.sh` Exam Simulators** (`NotReady` Worker, Down API Server, NetworkPolicy Blackhole, `Pending`/`CrashLoopBackOff`) |
 | [**⚡ CKA Exam Day Survival Guide & Cheatsheet**](./cheatsheets/cka-exam-day-survival-guide.md) | *Speed Boost* | ✅ | First-60-seconds `.bashrc`/`.vimrc` setup, Imperative `kubectl` generators, `jsonpath` one-liners, and `crictl`/`journalctl` node debugging |
 
+**Recommended order:** start with the **cheatsheet** so the `k` alias and `$do` shortcuts are set up before you begin. Then work through Domains **01 → 05**. Domain 05 comes last on purpose: it mixes everything from the earlier domains. Each module ends with a link to the next one.
+
+When a lab starts with an **Exam Scenario**, try to solve it on your own first, using `kubectl explain` and the [official docs](https://kubernetes.io/docs/) (the exam allows them), and only then read the step-by-step solution.
+
 ---
 
 ## Prerequisites for Kubernetes Lab Environment
+
+> **This section and Sections 1–11 are Path A (VMs).** On Path B, follow [kind/README.md](./kind/README.md) instead.
 
 ### 1. Hardware Requirements
 
@@ -191,18 +177,23 @@ For both master and worker nodes in the VMware Workstation VM settings:
 
 ## 2. Basic System Configuration
 
-Run these steps on **both** master and worker nodes:
+Run these steps on **both** master and worker nodes.
+
+**First, clone this repository onto each node.** You'll need it for the optional bootstrap script below and later for the labs and break-fix scripts. `git` comes with Ubuntu Server:
+
+```bash
+git clone https://github.com/Brazeg/k8s-homelab.git ~/k8s-homelab
+```
 
 > **⚡ Want to automate Sections 2 & 3?** After configuring your Netplan IP in Section 2.5, you can run [**`scripts/bootstrap-node.sh`**](./scripts/bootstrap-node.sh) to automatically configure swap, kernel modules, `sysctl`, `/etc/hosts`, `containerd`, `crictl`, and `kubeadm`/`kubelet`/`kubectl`:
 > ```bash
-> # On each node, clone this repo first (git ships with Ubuntu Server):
-> git clone https://github.com/Brazeg/k8s-homelab.git && cd k8s-homelab
->
+> cd ~/k8s-homelab
 > # On k8s-master:
 > sudo ./scripts/bootstrap-node.sh k8s-master 192.168.56.20
 > # On k8s-worker:
 > sudo ./scripts/bootstrap-node.sh k8s-worker 192.168.56.21
 > ```
+> Do Sections 2 and 3 by hand at least once, though. The exam expects you to know what each step does.
 
 ### 2.1 Update System
 
@@ -443,9 +434,13 @@ kubectl get nodes -o wide
 
 > **💡 Pro Tip for CKA Practice:** Once both nodes show `Ready` and all pods in `kubectl get pods -A` are `Running`, **take a VMware Snapshot** of both `k8s-master` and `k8s-worker` (e.g., named `"Clean-Cluster-State"`). This allows you to practice destructive CKA tasks (like `etcd` restore, cluster version upgrades, or breaking node components) and roll back to a clean cluster in 10 seconds!
 
+> **Core setup done.** Sections 7 and 8 are optional extras. If you'd rather run `kubectl` from Windows PowerShell than over SSH, do [Section 10](#10-accessing-kubernetes-cluster-from-windows-host-machine) now. Otherwise jump to [Section 11: Next Steps](#11-next-steps).
+
 ---
 
 ## 7. Install Monitoring Stack (Prometheus and Grafana)
+
+> **Optional.** Monitoring isn't on the CKA. This section gives you Grafana dashboards to watch, a realistic workload for the live upgrade in Section 8, and practice with Helm (which *is* on the CKA, see [Lab 1.4](./01-cluster-architecture/README.md#lab-14-kustomize--helm-basics)).
 
 Perform these steps on the **master node**:
 
@@ -558,6 +553,8 @@ From your Windows host browser, access:
 
 In both real-world production and the **CKA exam**, you never upgrade an empty cluster—you upgrade a cluster while **live applications, `PodDisruptionBudgets`, and monitoring stacks** are actively serving traffic.
 
+> **Optional, advanced: do this after [Lab 1.2](./01-cluster-architecture/README.md#lab-12-upgrading-a-kubeadm-cluster-v129--v130).** Lab 1.2 teaches the basic upgrade steps. This section repeats them on a cluster serving live traffic. Either one moves your cluster from `v1.29` to `v1.30`, so **revert to your `Clean-Cluster-State` snapshot afterwards** to keep a `v1.29` cluster for practicing again.
+>
 > **⚠️ Take a Snapshot First:** Before starting this stage, take a VMware snapshot of both `k8s-master` and `k8s-worker` so you can practice live upgrades repeatedly.
 
 ### 8.1 Deploy a Live Application with `PodDisruptionBudget` & Uptime Monitor
@@ -830,19 +827,9 @@ Now you can run `kubectl get nodes` directly from your Windows host terminal!
 
 ---
 
-## 11. Next Steps: Start Your CKA Practice Labs
+## 11. Next Steps
 
-Your 2-node Vanilla Kubernetes homelab is now ready! If you didn't already clone it for `bootstrap-node.sh`, clone this repository onto `k8s-master` and `k8s-worker` so you can run the hands-on CKA domain labs and interactive break-fix scripts directly inside your cluster:
+Your 2-node cluster is ready, and the repo is already cloned at `~/k8s-homelab` on both nodes (Section 2). Before you start:
 
-```bash
-git clone https://github.com/Brazeg/k8s-homelab.git
-cd k8s-homelab
-```
-
-### Recommended CKA Study Order
-1. ⚡ [**CKA Exam Day Survival Guide & Speed Cheatsheet**](./cheatsheets/cka-exam-day-survival-guide.md) — Configure your `.bashrc` aliases (`k`, `$do`, `$now`) and `.vimrc` before practicing.
-2. 🏗️ [**Domain 1: Cluster Architecture, Installation & Configuration (25%)**](./01-cluster-architecture/README.md) — Practice RBAC, `kubeadm` cluster upgrades (`v1.29` → `v1.30`), and `etcd` snapshot backup & restore.
-3. 📦 [**Domain 2: Workloads & Scheduling (15%)**](./02-workloads-scheduling/README.md) — Practice Deployments, Static Pods, DaemonSets, Taints/Tolerations, Sidecar containers, and `metrics-server` (`kubectl top`).
-4. 🌐 [**Domain 3: Services & Networking (20%)**](./03-services-networking/README.md) — Practice CoreDNS troubleshooting, Ingress, the new **Gateway API** (`Gateway`/`HTTPRoute`), and Calico `NetworkPolicy`.
-5. 💾 [**Domain 4: Storage (10%)**](./04-storage/README.md) — Practice Static `PV`/`PVC` provisioning and Dynamic `StorageClass` provisioning (`local-path-provisioner`).
-6. 🚨 [**Domain 5: Troubleshooting & Interactive Break-Fix Scenarios (30%)**](./05-troubleshooting-break-fix/README.md) — Test yourself under exam conditions by running `./break.sh` and grading your fix with `./verify.sh`!
+1. **Take the `Clean-Cluster-State` snapshot** from [Section 6](#6-verify-cluster-setup) if you haven't yet. Several labs are destructive.
+2. **Head to the [CKA Study Hub](#cka-study-hub--hands-on-lab-modules)** and begin with the ⚡ [cheatsheet](./cheatsheets/cka-exam-day-survival-guide.md).
