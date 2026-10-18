@@ -69,12 +69,15 @@ kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.32.2
 
 # 3. Wait for both nodes to become Ready (Calico takes 1–3 minutes)
 kubectl wait --for=condition=Ready nodes --all --timeout=300s
-kubectl wait --for=condition=Ready pods --all -A --timeout=300s
+kubectl wait --for=condition=Available tigerastatus --all --timeout=300s       # Calico's own health report
+kubectl wait --for=condition=Available deployment --all -n kube-system --timeout=300s   # CoreDNS
 kubectl get nodes -o wide
 kubectl get pods -A
 ```
 
 The nodes stay `NotReady` until Calico is running. That's expected, and it's the same CNI lesson as on the VMs.
+
+Why not just `kubectl wait pods --all -A`? While the Calico operator rolls out, it replaces some pods. If a pod `kubectl wait` is watching gets deleted, the wait fails with `NotFound`. Pods are disposable, so wait on what owns them instead: the `TigeraStatus` objects (the operator's summary of each Calico component) and the CoreDNS `Deployment`.
 
 > **Shortcut:** `task kind:up` runs steps 1–3 for you. Type the commands by hand at least once first, so you know what the shortcut does.
 

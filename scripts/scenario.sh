@@ -52,7 +52,7 @@ expect() {  # expect <pass|fail> <NN>
   local want=$1 n=$2 out rc
   for _ in $(seq 1 36); do  # 36 x 5s = 3 minutes
     rc=0
-    out=$(timeout 60 "$0" verify "$n" 2>&1) || rc=$?
+    out=$(timeout 60 bash "$0" verify "$n" 2>&1) || rc=$?
     if { [ "$want" = pass ] && [ "$rc" -eq 0 ]; } || { [ "$want" = fail ] && [ "$rc" -ne 0 ]; }; then
       echo "$out" | sed 's/^/   │ /'
       return
