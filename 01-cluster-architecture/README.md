@@ -334,3 +334,7 @@ kubectl get crd
 kubectl explain installations.spec.calicoNetwork
 ```
 
+
+---
+
+⬅ **Previous:** [Cheatsheet](../cheatsheets/cka-exam-day-survival-guide.md) · [⬆ CKA Study Hub](../Readme.md#cka-study-hub--hands-on-lab-modules) · **Next:** [Domain 2: Workloads & Scheduling](../02-workloads-scheduling/README.md) ➡

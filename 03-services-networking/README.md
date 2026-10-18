@@ -296,3 +296,7 @@ kubectl delete deploy api-backend && kubectl delete svc api-svc
 >       port: 53
 > ```
 
+
+---
+
+⬅ **Previous:** [Domain 2: Workloads & Scheduling](../02-workloads-scheduling/README.md) · [⬆ CKA Study Hub](../Readme.md#cka-study-hub--hands-on-lab-modules) · **Next:** [Domain 4: Storage](../04-storage/README.md) ➡

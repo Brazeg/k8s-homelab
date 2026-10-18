@@ -58,6 +58,8 @@ free -h
 - API server connection refused
 - Pods stuck in `ContainerCreating` state
 
+> **⚠️ Destructive.** This deletes every container image and container on the node. Try the targeted checks first (`systemctl status containerd`, `journalctl -u containerd`, and `SystemdCgroup = true` in `/etc/containerd/config.toml`). Use this only on a fresh node that won't recover any other way.
+
 **Complete Solution:**
 ```bash
 # 1. Clean existing containerd configuration
@@ -99,6 +101,8 @@ sudo systemctl restart kubelet
 - `kubectl get nodes` returns `"The connection to the server ...:6443 was refused"`
 - Unable to join worker nodes
 - Dashboard or other services can't connect to the API server
+
+> **⚠️ Last resort: this rebuilds the whole cluster.** A refused connection usually means the `kube-apiserver` static pod is down, and that is diagnosable. Work through the [troubleshooting flowchart](../05-troubleshooting-break-fix/README.md#1-systematic-cka-troubleshooting-flowchart) and [Scenario 02](../05-troubleshooting-break-fix/scenario-02-apiserver-down/SOLUTION.md) first (`crictl ps -a`, `crictl logs`, `/etc/kubernetes/manifests/`). In the exam, a reset is never the answer. Use this only if `kubeadm init` itself went wrong during setup.
 
 **Solution:**
 ```bash

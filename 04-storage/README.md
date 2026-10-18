@@ -181,3 +181,7 @@ kubectl delete pod dynamic-consumer
 kubectl delete pvc dynamic-pvc
 ```
 
+
+---
+
+⬅ **Previous:** [Domain 3: Services & Networking](../03-services-networking/README.md) · [⬆ CKA Study Hub](../Readme.md#cka-study-hub--hands-on-lab-modules) · **Next:** [Domain 5: Troubleshooting](../05-troubleshooting-break-fix/README.md) ➡

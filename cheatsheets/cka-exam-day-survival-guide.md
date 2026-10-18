@@ -134,3 +134,7 @@ df -h
 free -h
 sudo ss -tulpn | grep -E '6443|2379|10250'
 ```
+
+---
+
+[⬆ CKA Study Hub](../Readme.md#cka-study-hub--hands-on-lab-modules) · **Next:** [Domain 1: Cluster Architecture](../01-cluster-architecture/README.md) ➡
