@@ -22,6 +22,9 @@ This module covers **15% of the CKA exam**. You will practice managing Deploymen
 > 2. Perform a rolling update to `nginx:1.25` and record the rollout.
 > 3. Simulate a bad rollout to `nginx:invalid-tag`, observe the failure, and roll back to the previous working revision.
 
+<details>
+<summary><b>Show solution</b> (try the scenario on your own first)</summary>
+
 ### Step-by-Step Lab
 
 ```bash
@@ -44,6 +47,8 @@ kubectl rollout status deployment/webapp
 # Cleanup
 kubectl delete deployment webapp
 ```
+
+</details>
 
 ---
 
@@ -110,6 +115,9 @@ kubectl delete -f ds.yaml && rm ds.yaml
 > 1. Taint `k8s-worker` with `dedicated=gpu:NoSchedule` and label it `hardware=gpu`.
 > 2. Create a pod named `gpu-pod` with a matching `toleration` and `nodeAffinity` (`requiredDuringSchedulingIgnoredDuringExecution`) using the `In` operator so it schedules on `k8s-worker`.
 
+<details>
+<summary><b>Show solution</b> (try the scenario on your own first)</summary>
+
 ### Step-by-Step Lab
 
 1. **Apply a taint and label to `k8s-worker`:**
@@ -157,6 +165,8 @@ kubectl delete -f ds.yaml && rm ds.yaml
    kubectl label nodes k8s-worker hardware-
    ```
 
+</details>
+
 ---
 
 ## Lab 2.4: ConfigMaps, Secrets, Probes, Init & Sidecar Containers
@@ -168,6 +178,9 @@ kubectl delete -f ds.yaml && rm ds.yaml
 > - Run an `initContainer` (`init-setup`) that writes an initial line to a shared `emptyDir` volume `/var/log/nginx`.
 > - Configure a `livenessProbe` and `readinessProbe` on port `80` of the main `nginx` container.
 > - Run a `busybox` sidecar container that tails `/var/log/nginx/access.log`.
+
+<details>
+<summary><b>Show solution</b> (try the scenario on your own first)</summary>
 
 ### Step-by-Step Lab
 
@@ -250,6 +263,8 @@ kubectl delete pod app-with-sidecar
 kubectl delete secret db-secret
 kubectl delete configmap app-cfg
 ```
+
+</details>
 
 ---
 

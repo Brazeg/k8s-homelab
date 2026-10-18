@@ -20,6 +20,9 @@ This module covers **10% of the CKA exam**. You will configure PersistentVolumes
 > 2. Create a `PersistentVolumeClaim` named `app-pvc` requesting `1Gi` with `storageClassName: manual`. Verify it binds to `app-pv`.
 > 3. Create a Pod named `storage-pod` (image `nginx:alpine`) that mounts `app-pvc` at `/usr/share/nginx/html`.
 
+<details>
+<summary><b>Show solution</b> (try the scenario on your own first)</summary>
+
 ### Step-by-Step Lab
 
 1. **Create the `PersistentVolume` and `PersistentVolumeClaim`:**
@@ -93,6 +96,8 @@ This module covers **10% of the CKA exam**. You will configure PersistentVolumes
    kubectl delete pv app-pv
    ```
 
+</details>
+
 ---
 
 ## Lab 4.2: Dynamic Provisioning with `StorageClass` (`local-path-provisioner`)
@@ -164,6 +169,9 @@ In bare-metal or VMware homelab clusters, Kubernetes does not include a built-in
 
 > **⚠️ What actually happens in this homelab:** `local-path-provisioner` is hostPath-based and has **no resizer**, so it can't grow volumes. The API accepts your new request (`spec.resources.requests.storage: 1Gi`), but the volume's real size (`status.capacity.storage`) stays at `500Mi`. On the exam, the cluster's `StorageClass` uses a CSI driver with a resizer, so the same two commands complete the resize. The skill being tested is the commands plus knowing where to check the result.
 
+<details>
+<summary><b>Show solution</b> (try the scenario on your own first)</summary>
+
 ```bash
 # 1. Enable allowVolumeExpansion on the StorageClass (without it, the PVC patch is rejected)
 kubectl patch storageclass local-path -p '{"allowVolumeExpansion": true}'
@@ -181,6 +189,7 @@ kubectl delete pod dynamic-consumer
 kubectl delete pvc dynamic-pvc
 ```
 
+</details>
 
 ---
 

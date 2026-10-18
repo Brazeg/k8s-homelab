@@ -209,6 +209,9 @@ kubectl delete deploy api-backend && kubectl delete svc api-svc
 > - Allows **Ingress** traffic on TCP port `3306` (or `80` for testing) **ONLY** from pods labeled `role=backend` in the same namespace.
 > - Blocks all other ingress traffic to `db`.
 
+<details>
+<summary><b>Show solution</b> (try the scenario on your own first)</summary>
+
 ### Step-by-Step Lab
 
 1. **Create the namespace, pods, and service:**
@@ -256,6 +259,8 @@ kubectl delete deploy api-backend && kubectl delete svc api-svc
    # Cleanup
    kubectl delete namespace netpol-demo
    ```
+
+</details>
 
 > **💡 Exam Tip 1 (`AND` vs `OR` in NetworkPolicy):**
 > ```yaml

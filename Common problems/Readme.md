@@ -1,6 +1,6 @@
 # Kubernetes Cluster Setup: Common Issues and Solutions
 
-[⬅ Back to Main Setup Guide](../Readme.md)
+[⬅ Back to VM Lab Setup](../vm/README.md) · [Main CKA Hub](../Readme.md)
 
 When setting up a Kubernetes cluster, particularly in this virtualized environment, there are two critical issues that commonly occur and can prevent your cluster from functioning properly:
 

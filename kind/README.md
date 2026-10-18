@@ -1,6 +1,6 @@
 # Path B: kind Quick Start (Kubernetes Core Labs Without VMs)
 
-[⬅ Back to Main Guide](../Readme.md#choose-your-path-vms-or-kind)
+[⬅ Back to Main CKA Hub](../Readme.md#choose-your-path-vms-or-kind)
 
 This path skips VMware and Ubuntu installs. In ~5 minutes you get a **2-node `kubeadm` cluster with `containerd` and Calico**, running as Docker containers on your Windows machine through [kind](https://kind.sigs.k8s.io/) (Kubernetes IN Docker). You can then go straight to the [CKA domain labs](../Readme.md#cka-study-hub--hands-on-lab-modules).
 
@@ -43,7 +43,7 @@ The labs are written for a **bash** shell (heredocs, `chmod`, `.sh` scripts), so
 
    docker version && kind version && kubectl version --client
    ```
-   For Helm, use the same commands as [Main Guide Section 7.1](../Readme.md#71-install-helm).
+   For Helm, use the same commands as [VM Lab Section 7.1](../vm/README.md#71-install-helm).
 4. **Optional:** install [Task](https://taskfile.dev) for the shortcuts in [`Taskfile.yml`](../Taskfile.yml):
    ```bash
    sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
@@ -125,15 +125,15 @@ Whenever a lab says the left column, do the right column:
 | **4.3** PVC expansion | ⚠️ | Patch `standard` instead of `local-path`. Same "no resizer" result as on the VMs |
 | **5** Scenarios 03 & 04 | ✅ | Run from WSL |
 | **5** Scenarios 01 & 02 | ⚠️ | Run inside the node via `docker cp` + `docker exec` ([how](../05-troubleshooting-break-fix/README.md#3-how-to-run-a-scenario)) |
-| **Main Guide §7** Monitoring | ✅ | Use `localhost` instead of `192.168.56.20` (troubleshooting note in section 5 below) |
-| **Main Guide §8** Live upgrade | ❌ | Path A only |
+| **VM Lab §7** Monitoring | ✅ | Use `localhost` instead of `192.168.56.20` (troubleshooting note in section 5 below) |
+| **VM Lab §8** Live upgrade | ❌ | Path A only |
 | **Cheatsheet** | ✅ | Node commands (`crictl`, `journalctl`) work inside `docker exec` |
 
 ---
 
 ## 5. Monitoring Stack on kind
 
-[Main Guide Section 7.2](../Readme.md#72-install-prometheus-and-grafana) works as written. If the `monitoring-prometheus-node-exporter-*` pods fail to start with `path / is mounted on / but it is not a shared or slave mount` (a known Docker Desktop mount-propagation issue), turn off the host root mount:
+[VM Lab Section 7.2](../vm/README.md#72-install-prometheus-and-grafana) works as written. If the `monitoring-prometheus-node-exporter-*` pods fail to start with `path / is mounted on / but it is not a shared or slave mount` (a known Docker Desktop mount-propagation issue), turn off the host root mount:
 
 ```bash
 helm upgrade monitoring prometheus-community/kube-prometheus-stack -n monitoring \
@@ -142,7 +142,7 @@ helm upgrade monitoring prometheus-community/kube-prometheus-stack -n monitoring
 
 Access Grafana either way:
 - `kubectl port-forward deployment/monitoring-grafana 3000 -n monitoring` → `http://localhost:3000`, or
-- apply the NodePort manifest from [Section 7.4](../Readme.md#74-optional-access-grafana-and-prometheus-using-nodeport) → `http://localhost:30300` (Grafana) and `http://localhost:30909` (Prometheus).
+- apply the NodePort manifest from [Section 7.4](../vm/README.md#74-optional-access-grafana-and-prometheus-using-nodeport) → `http://localhost:30300` (Grafana) and `http://localhost:30909` (Prometheus).
 
 ---
 
@@ -161,4 +161,4 @@ docker start k8s-control-plane k8s-worker
 
 > **Restart caveat:** Docker can give the nodes different IPs when they restart (for example after a reboot). If a node stays `NotReady` or `calico-node` crash-loops afterwards, run `kubectl delete pod -n calico-system -l k8s-app=calico-node`. If that doesn't fix it, recreate the cluster.
 
-**Before exam day**, build [Path A](../Readme.md#1-infrastructure-setup) at least once. It is the only way to practice what kind can't cover: OS prep (swap, kernel modules, `sysctl`), `kubeadm init/join`, `kubeadm upgrade` across versions (Lab 1.2 and Section 8), and a full `etcd` restore.
+**Before exam day**, build [Path A](../vm/README.md#1-infrastructure-setup) at least once. It is the only way to practice what kind can't cover: OS prep (swap, kernel modules, `sysctl`), `kubeadm init/join`, `kubeadm upgrade` across versions (Lab 1.2 and Section 8), and a full `etcd` restore.
